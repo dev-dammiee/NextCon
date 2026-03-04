@@ -2,7 +2,12 @@ import Link from 'next/link';
 import { getInitials } from '@/app/lib/mock-data'; // helper only
 
 async function getSpeakers() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/speakers`, {
+  if (!process.env.NEXT_PUBLIC_API_URL) {
+    const { speakers } = await import('@/app/lib/mock-data');
+    return speakers;
+  }
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/speakers`, {
     next: { revalidate: 60 },
   });
   if (!res.ok) throw new Error('Failed to fetch speakers');

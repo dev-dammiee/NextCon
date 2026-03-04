@@ -1,7 +1,13 @@
 import Link from 'next/link';
+import { sessions as allSessions } from '@/app/lib/mock-data';
 
 async function getSessions() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/sessions`, {
+  if (!process.env.NEXT_PUBLIC_API_URL) {
+   
+    return allSessions;
+  }
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sessions`, {
     next: { revalidate: 60 },
   });
   if (!res.ok) throw new Error('Failed to fetch sessions');

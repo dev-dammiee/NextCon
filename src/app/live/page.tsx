@@ -6,7 +6,11 @@ export const dynamic = 'force-dynamic';
 
 // Fetch functions
 async function getCurrentSession() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/live/current`, {
+  if (!process.env.NEXT_PUBLIC_API_URL) {
+    // no live data when running locally without API
+    return null;
+  }
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/live/current`, {
     cache: 'no-store',
   });
   if (!res.ok) return null;
@@ -14,7 +18,10 @@ async function getCurrentSession() {
 }
 
 async function getUpcomingSessions() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/live/upcoming`, {
+  if (!process.env.NEXT_PUBLIC_API_URL) {
+    return [];
+  }
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/live/upcoming`, {
     next: { revalidate: 60 },
   });
   if (!res.ok) return [];
@@ -22,7 +29,10 @@ async function getUpcomingSessions() {
 }
 
 async function getAnnouncements() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/live/announcements`, {
+  if (!process.env.NEXT_PUBLIC_API_URL) {
+    return [];
+  }
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/live/announcements`, {
     next: { revalidate: 60 },
   });
   if (!res.ok) return [];

@@ -7,7 +7,16 @@ export async function generateStaticParams() {
 }
 
 async function getSession(id: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/sessions/${id}`, {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  // If API_URL is missing, empty, or a relative path -> use mock data
+  if (!apiUrl || apiUrl.startsWith('/')) {
+    const session = allSessions.find((s) => s.id === id);
+    if (!session) notFound();
+    return session;
+  }
+
+  const res = await fetch(`${apiUrl}/api/sessions/${id}`, {
     next: { revalidate: 60 },
   });
   if (res.status === 404) notFound();
@@ -16,7 +25,16 @@ async function getSession(id: string) {
 }
 
 async function getSpeaker(id: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/speakers/${id}`, {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  // Same fallback for missing or relative API_URL
+  if (!apiUrl || apiUrl.startsWith('/')) {
+    // lazy import to avoid circular deps
+    const { speakers: allSpeakers } = await import('@/app/lib/mock-data');
+    return allSpeakers.find((sp) => sp.id === id) || null;
+  }
+
+  const res = await fetch(`${apiUrl}/api/speakers/${id}`, {
     next: { revalidate: 60 },
   });
   if (!res.ok) return null;

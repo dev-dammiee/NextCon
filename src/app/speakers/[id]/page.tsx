@@ -17,7 +17,12 @@ async function getSpeaker(id: string) {
 }
 
 async function getSessionsBySpeaker(speakerId: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/sessions`, {
+  if (!process.env.NEXT_PUBLIC_API_URL) {
+    const { sessions } = await import('@/app/lib/mock-data');
+    return sessions.filter((s) => s.speakerId === speakerId);
+  }
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sessions`, {
     next: { revalidate: 60 },
   });
   const allSessions = await res.json();
