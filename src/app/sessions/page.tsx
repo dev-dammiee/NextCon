@@ -2,12 +2,14 @@ import Link from 'next/link';
 import { sessions as allSessions } from '@/app/lib/mock-data';
 
 async function getSessions() {
-  if (!process.env.NEXT_PUBLIC_API_URL) {
-   
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  // If API_URL is missing, empty, or a relative path -> use mock data
+  if (!apiUrl || apiUrl.startsWith('/')) {
     return allSessions;
   }
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sessions`, {
+  const res = await fetch(`${apiUrl}/api/sessions`, {
     next: { revalidate: 60 },
   });
   if (!res.ok) throw new Error('Failed to fetch sessions');

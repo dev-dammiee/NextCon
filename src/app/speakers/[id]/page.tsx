@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { speakers as allSpeakers, getInitials } from '@/app/lib/mock-data'; // only for generateStaticParams & helper
+import { speakers as allSpeakers, getInitials } from '@/app/lib/mock-data'; 
 import { Twitter, Github, Linkedin } from 'lucide-react';
 
 export async function generateStaticParams() {
@@ -8,7 +8,16 @@ export async function generateStaticParams() {
 }
 
 async function getSpeaker(id: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/speakers/${id}`, {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  // If API_URL is missing, empty, or a relative path -> use mock data
+  if (!apiUrl || apiUrl.startsWith('/')) {
+    const speaker = allSpeakers.find((sp) => sp.id === id);
+    if (!speaker) notFound();
+    return speaker;
+  }
+
+  const res = await fetch(`${apiUrl}/api/speakers/${id}`, {
     next: { revalidate: 60 },
   });
   if (res.status === 404) notFound();
@@ -17,12 +26,15 @@ async function getSpeaker(id: string) {
 }
 
 async function getSessionsBySpeaker(speakerId: string) {
-  if (!process.env.NEXT_PUBLIC_API_URL) {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  // If API_URL is missing, empty, or a relative path -> use mock data
+  if (!apiUrl || apiUrl.startsWith('/')) {
     const { sessions } = await import('@/app/lib/mock-data');
     return sessions.filter((s) => s.speakerId === speakerId);
   }
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sessions`, {
+  const res = await fetch(`${apiUrl}/api/sessions`, {
     next: { revalidate: 60 },
   });
   const allSessions = await res.json();

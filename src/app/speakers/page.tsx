@@ -2,12 +2,15 @@ import Link from 'next/link';
 import { getInitials } from '@/app/lib/mock-data'; // helper only
 
 async function getSpeakers() {
-  if (!process.env.NEXT_PUBLIC_API_URL) {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  // If API_URL is missing, empty, or a relative path -> use mock data
+  if (!apiUrl || apiUrl.startsWith('/')) {
     const { speakers } = await import('@/app/lib/mock-data');
     return speakers;
   }
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/speakers`, {
+  const res = await fetch(`${apiUrl}/api/speakers`, {
     next: { revalidate: 60 },
   });
   if (!res.ok) throw new Error('Failed to fetch speakers');

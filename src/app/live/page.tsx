@@ -6,11 +6,11 @@ export const dynamic = 'force-dynamic';
 
 // Fetch functions
 async function getCurrentSession() {
-  if (!process.env.NEXT_PUBLIC_API_URL) {
-    // no live data when running locally without API
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl || apiUrl.startsWith('/')) {
     return null;
   }
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/live/current`, {
+  const res = await fetch(`${apiUrl}/api/live/current`, {
     cache: 'no-store',
   });
   if (!res.ok) return null;
@@ -18,10 +18,11 @@ async function getCurrentSession() {
 }
 
 async function getUpcomingSessions() {
-  if (!process.env.NEXT_PUBLIC_API_URL) {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl || apiUrl.startsWith('/')) {
     return [];
   }
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/live/upcoming`, {
+  const res = await fetch(`${apiUrl}/api/live/upcoming`, {
     next: { revalidate: 60 },
   });
   if (!res.ok) return [];
@@ -29,10 +30,11 @@ async function getUpcomingSessions() {
 }
 
 async function getAnnouncements() {
-  if (!process.env.NEXT_PUBLIC_API_URL) {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl || apiUrl.startsWith('/')) {
     return [];
   }
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/live/announcements`, {
+  const res = await fetch(`${apiUrl}/api/live/announcements`, {
     next: { revalidate: 60 },
   });
   if (!res.ok) return [];
