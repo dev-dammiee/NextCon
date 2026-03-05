@@ -96,7 +96,7 @@ export default async function SessionDetailPage({ params }: PageProps) {
 
           {speaker && (
             <div className="mt-8 pt-8 border-t border-gray-800">
-              <h2 className="text-xl font-semibold text-white mb-4">Speaker</h2>
+              <h2 className="text-xl font-semibold text-white mb-4">Speakers</h2>
               <Link href={`/speakers/${speaker.id}`} className="group block">
                 <div className="flex items-center space-x-4">
                   <div className="w-14 h-14 bg-[#3B82F6] rounded-full flex items-center justify-center text-white font-bold text-xl">
