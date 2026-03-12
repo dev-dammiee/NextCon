@@ -1,13 +1,13 @@
 // app/api/live/current/route.ts
 import { NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic'; // Always run on the server
+export const dynamic = 'force-dynamic'; 
 
 export async function GET() {
   const now = new Date();
   const hour = now.getHours();
 
-  // Mock schedule – replace with real database query
+ 
   let session = null;
   if (hour >= 10 && hour < 11) {
     session = {
